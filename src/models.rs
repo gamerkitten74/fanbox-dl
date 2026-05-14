@@ -70,3 +70,8 @@ pub struct FileItem {
     pub size: u64,
     pub url: String,
 }
+
+#[derive(Deserialize, Debug)]
+pub struct PaginateResponse {
+    pub body: Vec<String>,
+}
