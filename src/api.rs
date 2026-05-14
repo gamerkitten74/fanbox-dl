@@ -29,17 +29,36 @@ impl FanboxClient {
         Ok(Self { client })
     }
 
-    // A method to fetch the posts
-    pub async fn get_posts(&self, creator: &str) -> Result<FanboxResponse, reqwest::Error> {
-        let url = format!("https://api.fanbox.cc/post.listCreator?creatorId={}&limit=10", creator);
+    // Add this new method to fetch the master list of page URLs
+    pub async fn get_pagination_urls(
+        &self,
+        creator: &str,
+        sorting: &crate::cli::Sorting
+    ) -> Result<Vec<String>, reqwest::Error> {
+        // Convert our Enum into the string Fanbox expects
+        let sort_str = match sorting {
+            crate::cli::Sorting::Newest => "newest",
+            crate::cli::Sorting::Oldest => "oldest",
+        };
 
-        println!("Fetching posts from: {}", url);
+        let url = format!("https://api.fanbox.cc/post.paginateCreator?creatorId={}&sort={}", creator, sort_str);
 
-        let response = self.client
-            .get(&url)
+        let response = self.client.get(&url)
             .send()
             .await?
-            .json::<FanboxResponse>()
+            .json::<crate::models::PaginateResponse>()
+            .await?;
+
+        Ok(response.body)
+    }
+
+    // Modify this to accept a pre-built URL instead of building it
+    pub async fn get_posts_by_url(&self, page_url: &str) -> Result<crate::models::FanboxResponse, reqwest::Error> {
+        let response = self.client
+            .get(page_url)
+            .send()
+            .await?
+            .json::<crate::models::FanboxResponse>()
             .await?;
 
         Ok(response)
