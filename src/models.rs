@@ -23,9 +23,10 @@ pub struct PostInfoResponse {
 pub struct PostInfo {
     pub id: String,
     pub title: String,
+    pub published_datetime: String,
     #[serde(rename = "type")]
     pub post_type: String,
-    
+
     pub body: Option<PostSpecificBody>,
 }
 
