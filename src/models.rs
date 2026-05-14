@@ -10,6 +10,8 @@ pub struct FanboxResponse {
 pub struct Post {
     pub id: String,
     pub title: String,
+    #[serde(rename = "publishedDatetime")]
+    pub published_datetime: String,
 }
 
 #[derive(Deserialize, Debug)]
@@ -23,7 +25,6 @@ pub struct PostInfoResponse {
 pub struct PostInfo {
     pub id: String,
     pub title: String,
-    pub published_datetime: String,
     #[serde(rename = "type")]
     pub post_type: String,
 
