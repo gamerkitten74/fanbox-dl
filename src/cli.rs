@@ -15,7 +15,7 @@ pub struct Args {
     pub out_dir: String,
 
     /// Separates content saved into directories based on the title of the post
-    #[arg(long)]
+    #[arg(long, default_value_t = true, action = clap::ArgAction::Set)]
     pub dir_by_post: bool,
 
     /// Ensure all content is downloaded, redownloading existing local content
