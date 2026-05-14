@@ -1,5 +1,8 @@
 use reqwest::header::{ACCEPT, COOKIE, ORIGIN, USER_AGENT, HeaderMap};
 use crate::models::FanboxResponse;
+use std::path::Path;
+use tokio::io::AsyncWriteExt;
+use crate::models::PostInfoResponse;
 
 pub struct FanboxClient {
     client: reqwest::Client,
@@ -40,5 +43,41 @@ impl FanboxClient {
             .await?;
 
         Ok(response)
+    }
+
+    // Fetch the detailed post info
+    pub async fn get_post_info(&self, post_id: &str) -> Result<PostInfoResponse, reqwest::Error> {
+        let url = format!("https://api.fanbox.cc/post.info?postId={}", post_id);
+        let response = self.client.get(&url).send().await?.json::<PostInfoResponse>().await?;
+        Ok(response)
+    }
+
+    // The universal download function
+    pub async fn download_file(
+        &self,
+        url: &str,
+        filepath: &Path,
+        overwrite: bool
+    ) -> Result<(), Box<dyn std::error::Error>> {
+
+        // Skip logic: if the file exists and --all was NOT passed, return early.
+        if filepath.exists() && !overwrite {
+            println!("  [SKIP] Already exists: {:?}", filepath.file_name().unwrap());
+            return Ok(());
+        }
+
+        println!("  [DOWNLOADING] {:?}", filepath.file_name().unwrap());
+
+        // 1. Fetch the file
+        let response = self.client.get(url).send().await?.error_for_status()?;
+
+        // 2. Load it into memory (bytes)
+        let bytes = response.bytes().await?;
+
+        // 3. Create the file and write the bytes asynchronously
+        let mut file = tokio::fs::File::create(filepath).await?;
+        file.write_all(&bytes).await?;
+
+        Ok(())
     }
 }
