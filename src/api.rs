@@ -1,5 +1,4 @@
 use reqwest::header::{ACCEPT, COOKIE, ORIGIN, USER_AGENT, HeaderMap};
-use crate::models::FanboxResponse;
 use std::path::Path;
 use tokio::io::AsyncWriteExt;
 use crate::models::PostInfoResponse;
