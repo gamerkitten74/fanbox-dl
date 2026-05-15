@@ -48,7 +48,7 @@ Open your terminal and run the binary with your Fanbox session ID and the creato
 1. Log into [fanbox.cc](https://fanbox.cc) in your browser.
 2. Open **Developer Tools** (F12 or Right-click > Inspect).
 3. Go to the **Application** tab (Chrome/Edge) or **Storage** tab (Firefox).
-4. In the left sidebar, expand **Cookies** and select `[https://www.fanbox.cc](https://www.fanbox.cc)`.
+4. In the left sidebar, expand **Cookies** and select `https://www.fanbox.cc`.
 5. Find the cookie named `FANBOXSESSID`.
 6. Copy the **Value**—this is your `--session-id`.
 
