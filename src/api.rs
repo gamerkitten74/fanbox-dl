@@ -9,7 +9,6 @@ pub struct FanboxClient {
 }
 
 impl FanboxClient {
-    // This is like Python's __init__
     pub fn new(session_id: &str) -> Result<Self, reqwest::Error> {
         let mut headers = HeaderMap::new();
 
@@ -29,13 +28,11 @@ impl FanboxClient {
         Ok(Self { client })
     }
 
-    // Add this new method to fetch the master list of page URLs
     pub async fn get_pagination_urls(
         &self,
         creator: &str,
         sorting: &crate::cli::Sorting
     ) -> Result<Vec<String>, reqwest::Error> {
-        // Convert our Enum into the string Fanbox expects
         let sort_str = match sorting {
             crate::cli::Sorting::Newest => "newest",
             crate::cli::Sorting::Oldest => "oldest",
@@ -52,7 +49,6 @@ impl FanboxClient {
         Ok(response.body)
     }
 
-    // Modify this to accept a pre-built URL instead of building it
     pub async fn get_posts_by_url(&self, page_url: &str) -> Result<crate::models::FanboxResponse, reqwest::Error> {
         let response = self.client
             .get(page_url)
@@ -64,14 +60,12 @@ impl FanboxClient {
         Ok(response)
     }
 
-    // Fetch the detailed post info
     pub async fn get_post_info(&self, post_id: &str) -> Result<PostInfoResponse, reqwest::Error> {
         let url = format!("https://api.fanbox.cc/post.info?postId={}", post_id);
         let response = self.client.get(&url).send().await?.json::<PostInfoResponse>().await?;
         Ok(response)
     }
 
-    // The universal download function
     pub async fn download_file(
         &self,
         url: &str,
@@ -79,7 +73,6 @@ impl FanboxClient {
         overwrite: bool
     ) -> Result<(), Box<dyn std::error::Error>> {
 
-        // Skip logic: if the file exists and --all was NOT passed, return early.
         if filepath.exists() && !overwrite {
             println!("  [SKIP] Already exists: {:?}", filepath.file_name().unwrap());
             return Ok(());

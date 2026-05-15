@@ -33,9 +33,12 @@ pub struct Args {
     /// Sort downloads by Newest or Oldest
     #[arg(long, value_enum, default_value_t = Sorting::Newest)]
     pub sorting: Sorting,
+
+    /// Automatically rotate NordVPN servers when rate-limited
+    #[arg(long)]
+    pub auto_vpn: bool,
 }
 
-// This enum defines the allowed values for the --sorting argument
 #[derive(ValueEnum, Clone, Debug, PartialEq)]
 pub enum Sorting {
     Newest,
