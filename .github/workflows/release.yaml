@@ -1,0 +1,57 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  build:
+    name: Build for ${{ matrix.asset_name }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        include:
+          # Linux (Intel/AMD 64-bit)
+          - os: ubuntu-latest
+            artifact_name: fanbox-dl
+            asset_name: fanbox-dl-linux-x86_64
+
+          # Windows (Intel/AMD 64-bit)
+          - os: windows-latest
+            artifact_name: fanbox-dl.exe
+            asset_name: fanbox-dl-windows-x86_64.exe
+
+          # macOS (Apple Silicon / M1 / M2 - ARM64)
+          - os: macos-14
+            artifact_name: fanbox-dl
+            asset_name: fanbox-dl-macos-arm64
+
+          # macOS (Intel - x86_64)
+          - os: macos-13
+            artifact_name: fanbox-dl
+            asset_name: fanbox-dl-macos-x86_64
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Build Release Binary
+        run: cargo build --release
+
+      - name: Rename binary (Linux/macOS)
+        if: matrix.os != 'windows-latest'
+        run: mv target/release/${{ matrix.artifact_name }} target/release/${{ matrix.asset_name }}
+
+      - name: Rename binary (Windows)
+        if: matrix.os == 'windows-latest'
+        run: ren target\release\${{ matrix.artifact_name }} ${{ matrix.asset_name }}
+
+      - name: Upload to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: target/release/${{ matrix.asset_name }}
