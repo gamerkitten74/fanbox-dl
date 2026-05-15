@@ -3,7 +3,7 @@ mod models;
 mod api;
 
 use clap::Parser;
-use cli::{Args, Sorting}; // Notice we import Sorting here too
+use cli::Args; // Notice we import Sorting here too
 use api::FanboxClient;
 use tokio::process::Command;
 
