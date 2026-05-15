@@ -16,7 +16,6 @@ pub struct Post {
 
 #[derive(Deserialize, Debug)]
 pub struct PostInfoResponse {
-    // The root JSON only has a "body" key
     pub body: PostInfo,
 }
 
